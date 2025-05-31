@@ -1,4 +1,6 @@
 // пробую використовувати ООП
+
+// рандомайзер
 class RandomUtils {
   static getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -18,6 +20,7 @@ class RandomUtils {
   }
 }
 
+// заготовки героев
 class Hero {
   constructor() {
     this.health = 100;
@@ -81,6 +84,7 @@ class Mage extends Hero {
   }
 }
 
+// герои
 class FireMage extends Mage {
   constructor() {
     super();
@@ -88,7 +92,7 @@ class FireMage extends Mage {
   }
 
   userPower() {
-    super.userPower("FIREBALL");
+    super.userPower("Кидаю - FIREBALL");
   }
 }
 
@@ -99,27 +103,53 @@ class EarthMage extends Mage {
   }
 
   userPower() {
-    super.userPower("MOUNTAIN REBELLION");
+    super.userPower("ЗАКЛЯТТЯ - MOUNTAIN REBELLION");
   }
 }
 
-// class Barbarian extends Hero {} планирую добовление класса варвар
+class IceMage extends Mage {
+  constructor() {
+    super();
+    this.element = "Маг льоду";
+  }
 
-// тест
+  userPower() {
+    super.userPower("КИДАЮ - SNOWBALL");
+  }
+}
+
+class Warlock extends Hero {
+  constructor() {
+    super();
+    this.element = "Warlok";
+    this.mana += 30;
+    this.health -= 15;
+    this.manaCost = 100;
+    this.manaRegeneration = 35;
+  }
+
+  userPower(skill = "закляття - curse of flesh rot") {
+    super.userPower(skill);
+  }
+
+  userHit() {
+    super.userHit("Удар палицею (мана поповненна на 35)");
+  }
+
+  userEscape() {
+    super.userEscape(1, 10, 5);
+  }
+}
 
 // создание персонажей
 const fireMage = new FireMage();
 const earthMage = new EarthMage();
-
+const iceMage = new IceMage();
+const warlock = new Warlock();
 // команды
-fireMage.showStats();
-fireMage.userHit();
-fireMage.userHit();
-fireMage.userHit();
-fireMage.userHit();
-fireMage.userPower();
-earthMage.userHit();
-earthMage.userPower();
-
-git add .
-git commit -m "Первый коммит"
+warlock.showStats();
+warlock.userPower();
+warlock.showStats();
+warlock.userHit();
+warlock.showStats();
+warlock.userPower();
