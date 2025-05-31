@@ -22,6 +22,7 @@ class Hero {
   constructor() {
     this.health = 100;
     this.mana = 50;
+    this.element = "Звичайний герой";
   }
 
   userEscape(min, max, factor) {
@@ -52,7 +53,7 @@ class Hero {
 
   showStats() {
     console.log(
-      `Герой ${this.element} рівень ХП: ${this.health}, рівень мани: ${this.mana}`
+      `Герой: ${this.element}, рівень ХП: ${this.health}, рівень мани: ${this.mana}`
     );
   }
 }
@@ -60,19 +61,19 @@ class Hero {
 class Mage extends Hero {
   constructor() {
     super();
-    this.element = "Маг вогню";
-    this.mana += 50; // Хочу добавить больше стихий
+    this.element = ""; // Хочу добавить больше стихий
+    this.mana += 50;
     this.health -= 25;
     this.manaCost = 50;
     this.manaRegeneration = 50;
   }
 
-  userPower() {
-    super.userPower("FIREBALL");
+  userPower(skill = "Магічна атака") {
+    super.userPower(skill);
   }
 
   userHit() {
-    super.userHit("Удар палицею");
+    super.userHit("Удар палицею (мана поповненна на 50)");
   }
 
   userEscape() {
@@ -80,8 +81,45 @@ class Mage extends Hero {
   }
 }
 
+class FireMage extends Mage {
+  constructor() {
+    super();
+    this.element = "Маг вогню";
+  }
+
+  userPower() {
+    super.userPower("FIREBALL");
+  }
+}
+
+class EarthMage extends Mage {
+  constructor() {
+    super();
+    this.element = "Маг землі";
+  }
+
+  userPower() {
+    super.userPower("MOUNTAIN REBELLION");
+  }
+}
+
 // class Barbarian extends Hero {} планирую добовление класса варвар
 
-const fireMage = new Mage();
+// тест
 
-fireMage.userEscape();
+// создание персонажей
+const fireMage = new FireMage();
+const earthMage = new EarthMage();
+
+// команды
+fireMage.showStats();
+fireMage.userHit();
+fireMage.userHit();
+fireMage.userHit();
+fireMage.userHit();
+fireMage.userPower();
+earthMage.userHit();
+earthMage.userPower();
+
+git add .
+git commit -m "Первый коммит"
