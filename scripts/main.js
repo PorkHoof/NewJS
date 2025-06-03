@@ -1,6 +1,3 @@
-// пробую використовувати ООП
-
-// рандомайзер
 class RandomUtils {
   static getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -20,7 +17,6 @@ class RandomUtils {
   }
 }
 
-// заготовки героев
 class Hero {
   constructor() {
     this.health = 100;
@@ -64,7 +60,7 @@ class Hero {
 class Mage extends Hero {
   constructor() {
     super();
-    this.element = ""; // Хочу добавить больше стихий
+    this.element = "";
     this.mana += 50;
     this.health -= 25;
     this.manaCost = 50;
@@ -141,12 +137,11 @@ class Warlock extends Hero {
   }
 }
 
-// создание персонажей
 const fireMage = new FireMage();
 const earthMage = new EarthMage();
 const iceMage = new IceMage();
 const warlock = new Warlock();
-// команды
+
 warlock.showStats();
 warlock.userPower();
 warlock.showStats();
