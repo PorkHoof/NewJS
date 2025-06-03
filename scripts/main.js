@@ -21,38 +21,48 @@ class Hero {
   constructor() {
     this.health = 100;
     this.mana = 50;
-    this.element = "Звичайний герой";
+    this.subclass = "Звичайний герой";
+    this.baseAttack = 10;
+    this.basePowerDamage = 25;
+    this.manaCost = 30;
+    this.manaRegeneration = 10;
   }
 
-  userEscape(min, max, factor) {
-    if (RandomUtils.getRandomInt(min, max) > factor) {
-      console.log("Ви втекли");
-    } else {
-      console.log("Ви намагались втекти але вас вбило");
-    }
+  takeDamage(damage) {
+    this.health -= damage;
+    console.log(
+      `${this.subclass} отримав ${damage} шкоди. Залишилось ХП: ${this.health}`
+    );
   }
 
-  userHit(hit) {
-    if (this.mana > 150) {
-      console.log("Максимальне значення мани");
-      return;
-    }
-    this.mana += this.manaRegeneration;
-    console.log(hit);
-  }
-
-  userPower(skill) {
-    if (this.mana < this.manaCost) {
-      console.log("Недостатньо мани");
-      return;
-    }
+  getPowerDamage() {
     this.mana -= this.manaCost;
-    console.log(skill);
+    return this.basePowerDamage + RandomUtils.getRandomInt(0, 10);
+  }
+
+  hit() {
+    this.mana += this.manaRegeneration;
+    if (this.mana > 150) this.mana = 150;
+    console.log(`${this.subclass} наносить звичайну атаку!`);
+    return this.baseAttack + RandomUtils.getRandomInt(-2, 5);
+  }
+
+  userPower(message = "Використовую вміння!") {
+    if (this.mana < this.manaCost) {
+      console.log(`${this.subclass} не вистачає мани для вміння!`);
+      return false;
+    }
+    console.log(`${this.subclass}: ${message}`);
+    return true;
   }
 
   showStats() {
+    console.log(`${this.subclass} | ХП: ${this.health}, Мана: ${this.mana}`);
+  }
+
+  showInfoHero() {
     console.log(
-      `Герой: ${this.element}, рівень ХП: ${this.health}, рівень мани: ${this.mana}`
+      `Повна інформація про героя:\n\nГерой: ${this.subclass}, рівень ХП: ${this.health}, рівень мани: ${this.mana}\n\nСила удару: ${this.baseAttack} (модифікатор -2, +5)\nСила навика: ${this.basePowerDamage} (модифікатор 0, +10)\n\nРегенерація мани: ${this.manaRegeneration}\nВитрата мани на навик: ${this.manaCost}`
     );
   }
 }
@@ -60,91 +70,120 @@ class Hero {
 class Mage extends Hero {
   constructor() {
     super();
-    this.element = "";
     this.mana += 50;
     this.health -= 25;
     this.manaCost = 50;
     this.manaRegeneration = 50;
-  }
-
-  userPower(skill = "Магічна атака") {
-    super.userPower(skill);
-  }
-
-  userHit() {
-    super.userHit("Удар палицею (мана поповненна на 50)");
-  }
-
-  userEscape() {
-    super.userEscape(1, 10, 7);
+    this.baseAttack = 10;
+    this.basePowerDamage = 40;
   }
 }
 
-// герои
 class FireMage extends Mage {
   constructor() {
     super();
-    this.element = "Маг вогню";
+    this.subclass = "Маг вогню";
+    this.basePowerDamage = 50;
   }
 
   userPower() {
-    super.userPower("Кидаю - FIREBALL");
+    return super.userPower("Кидаю - FIREBALL");
   }
 }
 
 class EarthMage extends Mage {
   constructor() {
     super();
-    this.element = "Маг землі";
+    this.subclass = "Маг землі";
+    this.basePowerDamage = 45;
   }
 
   userPower() {
-    super.userPower("ЗАКЛЯТТЯ - MOUNTAIN REBELLION");
+    return super.userPower("ЗАКЛЯТТЯ - MOUNTAIN REBELLION");
   }
 }
 
 class IceMage extends Mage {
   constructor() {
     super();
-    this.element = "Маг льоду";
+    this.subclass = "Маг льоду";
+    this.basePowerDamage = 35;
   }
 
   userPower() {
-    super.userPower("КИДАЮ - SNOWBALL");
+    return super.userPower("КИДАЮ - SNOWBALL");
   }
 }
 
 class Warlock extends Hero {
   constructor() {
     super();
-    this.element = "Warlok";
+    this.subclass = "Варлок";
     this.mana += 30;
     this.health -= 15;
     this.manaCost = 100;
     this.manaRegeneration = 35;
+    this.baseAttack = 12;
+    this.basePowerDamage = 60;
   }
 
-  userPower(skill = "закляття - curse of flesh rot") {
-    super.userPower(skill);
-  }
-
-  userHit() {
-    super.userHit("Удар палицею (мана поповненна на 35)");
-  }
-
-  userEscape() {
-    super.userEscape(1, 10, 5);
+  userPower() {
+    return super.userPower("Прокляття з ТІНЕВОГО СВІТУ");
   }
 }
 
+class FightUtils {
+  static heroTurn(attacker, defender) {
+    console.log(`\nХід ${attacker.subclass}:`);
+
+    if (attacker.mana < attacker.manaCost) {
+      const damage = attacker.hit();
+      defender.takeDamage(damage);
+    } else {
+      if (attacker.userPower()) {
+        const damage = attacker.getPowerDamage();
+        defender.takeDamage(damage);
+      }
+    }
+    attacker.showStats();
+    defender.showStats();
+  }
+
+  static fight(firstHero, secondHero) {
+    console.log(
+      `\nБій розпочався між ${firstHero.subclass} та ${secondHero.subclass}!`
+    );
+
+    while (firstHero.health > 0 && secondHero.health > 0) {
+      // Хід першого героя
+      FightUtils.heroTurn(firstHero, secondHero);
+
+   static checkLivingHero() {
+ if (secondHero.health <= 0) {
+        console.log(
+          `\n${secondHero.subclass} переможений! ${firstHero.subclass} переміг!`
+        );
+        break;
+      }
+   }  
+
+      // Хід другого героя
+      FightUtils.heroTurn(secondHero, firstHero);
+
+      if (firstHero.health <= 0) {
+        console.log(
+          `\n${firstHero.subclass} переможений! ${secondHero.subclass} переміг!`
+        );
+        break;
+      }
+    }
+  }
+}
+
+// ======= Приклад використання =======
 const fireMage = new FireMage();
 const earthMage = new EarthMage();
 const iceMage = new IceMage();
 const warlock = new Warlock();
 
-warlock.showStats();
-warlock.userPower();
-warlock.showStats();
-warlock.userHit();
-warlock.showStats();
-warlock.userPower();
+FightUtils.fight(warlock, fireMage);
