@@ -19,7 +19,7 @@ class RandomUtils {
 
 class Hero {
   constructor() {
-    this.health = 100;
+    this.health = 200;
     this.mana = 50;
     this.subclass = "Звичайний герой";
     this.baseAttack = 10;
@@ -37,7 +37,7 @@ class Hero {
 
   getPowerDamage() {
     this.mana -= this.manaCost;
-    return this.basePowerDamage + RandomUtils.getRandomInt(0, 10);
+    return this.basePowerDamage + RandomUtils.getRandomInt(-10, 10);
   }
 
   hit() {
@@ -95,7 +95,7 @@ class EarthMage extends Mage {
   constructor() {
     super();
     this.subclass = "Маг землі";
-    this.basePowerDamage = 45;
+    this.basePowerDamage = 50;
   }
 
   userPower() {
@@ -107,7 +107,7 @@ class IceMage extends Mage {
   constructor() {
     super();
     this.subclass = "Маг льоду";
-    this.basePowerDamage = 35;
+    this.basePowerDamage = 50;
   }
 
   userPower() {
@@ -133,6 +133,27 @@ class Warlock extends Hero {
 }
 
 class FightUtils {
+  static balancer(firstHero, secondHero) {
+    const balancerCoefficient = 20;
+    console.log(
+      `\n${firstHero.subclass} б'є першим, ${secondHero.subclass} отримує додатково ${balancerCoefficient}ХП`
+    );
+    secondHero.health += balancerCoefficient;
+  }
+
+  static fight(firstHero, secondHero) {
+    console.log(
+      `\nБій розпочався між ${firstHero.subclass} та ${secondHero.subclass}!`
+    );
+
+    this.balancer(firstHero, secondHero);
+
+    while (firstHero.health > 0 && secondHero.health > 0) {
+      if (this.heroTurn(firstHero, secondHero)) break;
+      if (this.heroTurn(secondHero, firstHero)) break;
+    }
+  }
+
   static heroTurn(attacker, defender) {
     console.log(`\nХід ${attacker.subclass}:`);
 
@@ -143,44 +164,27 @@ class FightUtils {
       if (attacker.userPower()) {
         const damage = attacker.getPowerDamage();
         defender.takeDamage(damage);
+      } else {
+        const damage = attacker.hit();
+        defender.takeDamage(damage);
       }
     }
+
     attacker.showStats();
     defender.showStats();
-  }
 
-  static fight(firstHero, secondHero) {
-    console.log(
-      `\nБій розпочався між ${firstHero.subclass} та ${secondHero.subclass}!`
-    );
-
-    while (firstHero.health > 0 && secondHero.health > 0) {
-      // Хід першого героя
-      FightUtils.heroTurn(firstHero, secondHero);
-
-   static checkLivingHero() {
- if (secondHero.health <= 0) {
-        console.log(
-          `\n${secondHero.subclass} переможений! ${firstHero.subclass} переміг!`
-        );
-        break;
-      }
-   }  
-
-      // Хід другого героя
-      FightUtils.heroTurn(secondHero, firstHero);
-
-      if (firstHero.health <= 0) {
-        console.log(
-          `\n${firstHero.subclass} переможений! ${secondHero.subclass} переміг!`
-        );
-        break;
-      }
+    if (defender.health <= 0) {
+      console.log(
+        `\n${defender.subclass} переможений! ${attacker.subclass} переміг!`
+      );
+      return true;
     }
+
+    return false;
   }
 }
 
-// ======= Приклад використання =======
+// ======= Використання =======
 const fireMage = new FireMage();
 const earthMage = new EarthMage();
 const iceMage = new IceMage();
